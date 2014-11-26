@@ -1,0 +1,19 @@
+[Unit]
+Description=kafka1
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=Simple
+TimeoutStartSec=0
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill kafka1
+ExecStartPre=-/usr/bin/docker rm kafka1
+ExecStartPre=/usr/bin/docker pull wurstmeister/kafka:0.8.1.1-1
+ExecStart=/usr/bin/docker run --name kafka1 \
+                          -p 6667:6667 \
+                          -e KAFKA_ADVERTISED_PORT=6667 \
+                          -e KAFKA_ZOOKEEPER_CONNECT=<LIST_OF_ZOOKEEPER_HOSTS> \
+                          -e KAFKA_BROKER_ID=100 \
+                          wurstmeister/kafka:0.8.1.1-1
+ExecStop=/usr/bin/docker stop kafka1
